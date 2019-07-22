@@ -1,0 +1,39 @@
+from tkinter import *
+
+# creates a vanvas for the size of the board
+WIDTH=500
+HEIGHT=500
+tk = Tk()
+canvas = Canvas(tk, width=WIDTH, height=HEIGHT, bg="blue")
+canvas.pack()
+
+
+x1 = 0
+x2 = 500
+
+# Both for statements creates the grid on the canvas
+for k in range(0, 500, 25):
+    y1 = k
+    y2 = k
+    canvas.create_line(x1, y1, x2, y2)
+
+y1 = 0
+y2 = 500
+for k in range(0, 500,25):
+    x1 = k
+    x2 = k
+    canvas.create_line(x1, y1, x2, y2)
+
+ #  (50, 25, 25, 50, ) (postion for x, size x, size y, postion for y)   when size x changes postion y changes and when postion x changes size y changes.  
+ # postion for x must be 25 greater size y
+ # postion for y must be 25 greater size x
+object= canvas.create_rectangle(50, 100, 25, 125, fill="red", tags="bg") 
+
+# on click of left mouse button will create a yellow rectangle at 0,0 on the grid going to be used for movment
+def create_object(event):
+    canvas.create_rectangle(25, 0, 0, 25, fill="yellow", tags="bg") 
+
+canvas.bind("<Button-1>", create_object)
+
+tk.mainloop()
+
