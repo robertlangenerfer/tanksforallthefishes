@@ -1,5 +1,6 @@
 from tkinter import *
-
+from tank import *
+from bounding_box import *
 # creates a vanvas for the size of the board
 WIDTH=500
 HEIGHT=500
@@ -7,10 +8,33 @@ tk = Tk()
 canvas = Canvas(tk, width=WIDTH, height=HEIGHT, bg="blue")
 canvas.pack()
 
-
 x1 = 0
 x2 = 500
+class Tank:
+    def __init__(self,initX,initY,x,y,width,height,speed):
+        self.ix=initX
+        self.iy=initY
+        self.x=x
+        self.y=y
+        self.width=width
+        self.height=height
+        self.point= [self.x- self.width/8,  self.y-self.height/2,          
+                     self.x + self.width/8,  self.y-self.height/2,           
+                     self.x + self.width/8,  self.y,             
+                     self.x + self.width/2,  self.y,       
+                     self.x + self.width/2,   self.y+self.height/2,       
+                     self.x -self.width/2,    self.y+self.height/2,
+                     self.x - self.width/2,    self.y, 
+                     self.x -self.width/8,     self.y
+                     ]
+  
+        self.box=bounding_box(self.x,self.y,self.width,self.height)
+        self.shape =  canvas.create_polygon(self.point,fill="green", tags="bg")
+        
 
+    
+    def Tank_collsion(A:bounding_box,B:bounding_box):
+        bounding_box.collsion(A,B)
 # Both for statements creates the grid on the canvas
 for k in range(0, 500, 25):
     y1 = k
@@ -27,13 +51,7 @@ for k in range(0, 500,25):
  #  (50, 25, 25, 50, ) (postion for x, size x, size y, postion for y)   when size x changes postion y changes and when postion x changes size y changes.  
  # postion for x must be 25 greater size y
  # postion for y must be 25 greater size x
-object= canvas.create_rectangle(50, 100, 25, 125, fill="red", tags="bg") 
+tank = Tank(5,5,100,50,30,30,1)
 
-# on click of left mouse button will create a yellow rectangle at 0,0 on the grid going to be used for movment
-def create_object(event):
-    canvas.create_rectangle(25, 0, 0, 25, fill="yellow", tags="bg") 
-
-canvas.bind("<Button-1>", create_object)
 
 tk.mainloop()
-
