@@ -1,0 +1,152 @@
+
+from tkinter import *
+import random
+import time
+
+numObst = random.randint(10,25)
+cordListX = []
+cordListY = []
+
+for i in range(numObst+2): 
+	if i < numObst:
+		xPos = random.randint(0,20)
+		yPos = random.randint(0,20)
+	elif i == numObst:
+		xPos = random.randint(0,4)
+		yPos = random.randint(0,20)
+	else:
+		xPos = random.randint(15,20)
+		yPos = random.randint(0,20)
+
+	validCord = True
+
+	repeatVal = True
+
+	while repeatVal == True:
+		for j in range(len(cordListX)):
+			if cordListX[j] == xPos:
+				if cordListY[j] == yPos:
+					validCord = False
+				
+		if validCord == True:
+			repeatVal = False
+		else:
+			if i < numObst:
+				xPos = random.randint(0,18)
+				yPos = random.randint(0,18)
+			elif i == numObst:
+				xPos = random.randint(0,4)
+				yPos = random.randint(0,18)
+			else:
+				xPos = random.randint(15,18)
+				yPos = random.randint(0,19)
+			validCord = True
+
+	cordListX.append(xPos)
+	cordListY.append(yPos)
+
+
+class Tank:
+    def __init__(self,initX,initY,x,y,health,fire_rate,speed,name,team,angle):
+        self.ix=initX
+        self.iy=initY
+        self.x=initX
+        self.y=initY
+        self.health=health
+        self.fr=fire_rate
+        self.speed=speed
+        self.name=name
+        self.team=team
+        self.angle=angle
+
+
+
+# creates a vanvas for the size of the board
+WIDTH=500
+HEIGHT=500
+tk = Tk()
+canvas = Canvas(tk, width=WIDTH, height=HEIGHT, bg="blue")
+canvas.pack()
+
+x1 = 0
+x2 = 500
+
+# Both for statements creates the grid on the canvas
+for k in range(0, 500, 25):
+    y1 = k
+    y2 = k
+    canvas.create_line(x1, y1, x2, y2)
+
+y1 = 0
+y2 = 500
+for k in range(0, 500,25):
+    x1 = k
+    x2 = k
+    canvas.create_line(x1, y1, x2, y2)
+
+ #  (50, 25, 25, 50, ) (postion for x, size x, size y, postion for y)   when size x changes postion y changes and when postion x changes size y changes.  
+ # postion for x must be 25 greater size y
+ # postion for y must be 25 greater size x
+
+
+#make obstacles
+for i in range(numObst):
+	canvas.create_rectangle(cordListX[i]*25,cordListY[i]*25,cordListX[i]*25+25,cordListY[i]*25+25,fill="red")
+
+
+tank1 = Tank(cordListX[numObst],cordListY[numObst],cordListX[numObst],cordListY[numObst],100,1,1,"Tank1",1,0)
+tank2 = Tank(cordListX[numObst+1],cordListY[numObst+1],cordListX[numObst+1],cordListY[numObst+1],100,1,1,"Tank2",2,0)
+
+tank1Canvas = canvas.create_rectangle(tank1.ix*25,tank1.iy*25,tank1.ix*25+25,tank1.iy*25+25,fill = "black",tags = "tank1")
+tank2Canvas = canvas.create_rectangle(tank2.ix*25,tank2.iy*25,tank2.ix*25+25,tank2.iy*25+25,fill = "black",tags = "tank2")
+
+def checkDirX(tank1,tank2):
+	if tank2.x > tank1.x:
+		return 25
+	if tank2.x < tank1.x:
+		return -25
+	if tank2.x == tank1.x:
+		return 0
+
+def checkDirY(tank1,tank2):
+	if tank2.y > tank1.y:
+		return 25
+	if tank2.y < tank1.y:
+		return -25
+	if tank2.y == tank1.y:
+		return 0
+
+def checkCollisions(tank1,xCords,yCords,checkX,checkY):
+    collision = 0
+    for j in xCords:
+        if tank1.x + checkX/25 == xCords[j]:
+            print(xCords[j], "x")
+            if tank1.y + checkY/25 == yCords[j]:
+                collision = 1
+                print(yCords[j], "y")
+    if collision == 0:
+        return False
+    else:
+        return True
+
+def cycle():
+    checkX = checkDirX(tank1,tank2)
+    checkY = checkDirY(tank1,tank2)
+    collisionCheck = checkCollisions(tank1,cordListX,cordListY,checkX,checkY)
+    if collisionCheck == False:
+        canvas.move(tank1Canvas, checkX,checkY)
+        tank1.x += checkX/25
+        tank1.y += checkY/25
+    else:
+        canvas.move(tank1Canvas, 0,25)
+        tank1.y += 1
+    if checkX == 0 & checkY == 0:
+        canvas.create_rectangle(0,0,500,500, fill="black")
+        canvas.create_text(250,50,fill="yellow",font="Times 20 italic bold",text="Game Over")
+
+    canvas.tag_raise("tank1")
+    tk.update_idletasks()
+    tk.after(500, cycle)
+
+tk.after(0,cycle)
+tk.mainloop()
